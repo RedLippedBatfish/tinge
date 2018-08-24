@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const SALT_ROUNDS = 10;
 
 const paletteSchema = new Schema({
+  name: { type: String, required: true },
   R: { type: Number, required: true },
   G: { type: Number, required: true },
   B: { type: Number, required: true }

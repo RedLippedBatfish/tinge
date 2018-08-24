@@ -5,6 +5,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+const Users = require('./controllers/Users');
+
 // Create connection to Mongo DB via Mongoose
 mongoose.connect(process.env.DB_URI);
 mongoose.connection.once('open', () => console.log('Hello from tinge-db!'));
@@ -24,6 +26,11 @@ app.use(cors());
 // Dummy Route
 app.get('/', (req, res) => {
   res.send('Hello Brit');
+});
+
+// Signup Route
+app.post('/signup', Users.createUser, (req, res) => {
+  res.json({ username: res.locals.username, _id: res.locals._id });
 });
 
 // Start server
