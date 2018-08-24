@@ -1,0 +1,32 @@
+{
+  "name": "tinge",
+  "version": "1.0.0",
+  "description": "Find most prominent colors in any image.",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon -e js,html,css src/server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RedLippedBatfish/tinge.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RedLippedBatfish/tinge/issues"
+  },
+  "homepage": "https://github.com/RedLippedBatfish/tinge#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "jwt-simple": "^0.5.1",
+    "mongoose": "^5.2.9",
+    "nodemon": "^1.18.3",
+    "passport-jwt": "^4.0.0"
+  }
+}
