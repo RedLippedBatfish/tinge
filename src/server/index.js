@@ -43,5 +43,25 @@ app.post('/signup', Users.createUser, tokenService.createToken, (req, res) => {
   res.json({ token: res.locals.token });
 });
 
+//Login Route
+app.post('/login', Users.login, tokenService.createToken, (req, res) => {
+  res.json({ token: res.locals.token, palettes: res.locals.palettes });
+});
+
+//Generate Palette Route
+app.post('/generatePalette', Users.generatePalette, (req, res) => {
+  
+});
+
+//Save Palette Route
+app.post('/savePalette', authService.restrict(), Users.savePalette, tokenService.createToken, (req, res) => {
+  res.json( { token: res.locals.token, palettes: res.locals.palettes });
+});
+
+//Delete Palette Route
+app.delete('/deletePalette/:palette_id', authService.restrict(), Users.deletePalette, tokenService.createToken, (req, res) => {
+  res.json({palettes: res.locals.palettes})
+});
+
 // Start server
 app.listen(PORT, () => console.log('Server started on port', PORT));
