@@ -40,7 +40,7 @@ app.get('/restricted', authService.restrict(), (req, res) => {
 
 // Signup Route
 app.post('/signup', Users.createUser, tokenService.createToken, (req, res) => {
-  res.json({ token: res.locals.token });
+  res.json({ token: res.locals.token, palettes: res.locals.palettes });
 });
 
 //Login Route
@@ -60,7 +60,7 @@ app.post('/savePalette', authService.restrict(), Users.savePalette, tokenService
 
 //Delete Palette Route
 app.delete('/deletePalette/:palette_id', authService.restrict(), Users.deletePalette, tokenService.createToken, (req, res) => {
-  res.json({palettes: res.locals.palettes})
+  res.json({token: res.locals.token, palettes: res.locals.palettes})
 });
 
 // Start server

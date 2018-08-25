@@ -14,11 +14,12 @@ const UsersController = {
           console.error('Error in UsersController.createUser:', err);
           res.send(err);
         }
-        res.locals.tokenData = {
+        res.locals.newTokenData = {
           _id: user._id,
           username: user.username,
           palettes: []
         };
+        res.locals.palettes = [];
         next();
       });
     } else {
@@ -39,7 +40,7 @@ const UsersController = {
           bcrypt.compare(req.body.password, docs[0].password_digest, function(err, result) {
             if (result) {
               res.locals.palettes = docs[0].palettes;
-              res.locals.tokenData = {
+              res.locals.newTokenData = {
                 _id: docs[0]._id,
                 username: docs[0].username,
                 palettes: docs[0].palettes,
