@@ -31,48 +31,47 @@ const UsersController = {
   login(req, res, next) {
     User.find(
       {
-        username: req.body.username,
-      }, (err, docs) => {
+        username: req.body.username
+      },
+      (err, docs) => {
         if (err || docs.length === 0) {
           res.status(401);
-          res.send('User not found.')
+          res.send('User not found.');
         } else {
-          bcrypt.compare(req.body.password, docs[0].password_digest, function(err, result) {
-            if (result) {
+          bcrypt.compare(req.body.password, docs[0].password_digest).then(isPasswordMatch => {
+            if (isPasswordMatch) {
               res.locals.palettes = docs[0].palettes;
               res.locals.newTokenData = {
                 _id: docs[0]._id,
                 username: docs[0].username,
-                palettes: docs[0].palettes,
-              }
+                palettes: docs[0].palettes
+              };
               next();
             } else {
-              res.status(401);
-              res.send('Invalid login credentials.')
+              res.status(401).send('Invalid login credentials.');
             }
-          })
+          });
         }
       }
-    )
+    );
   },
 
   // Middleware for generating new palette
   generatePalette(req, res, next) {
     // Import npm dominant color package (To be determined)
-
   },
 
   // Middleware for creating new palette
-  savePalette(req, res, next) { 
-    console.log("req body colors", req.body.colors);
+  savePalette(req, res, next) {
+    console.log('req body colors', req.body.colors);
     User.findById(res.locals.tokenData._id, (err, doc) => {
       if (err) {
         console.err(err);
       }
-      const newPalette = new Palette( {
+      const newPalette = new Palette({
         name: req.body.name,
-        colors: req.body.colors,
-      })
+        colors: req.body.colors
+      });
       doc.palettes.push(newPalette);
       doc.save((err, user) => {
         if (err) {
@@ -83,14 +82,13 @@ const UsersController = {
         res.locals.newTokenData = {
           _id: res.locals.tokenData._id,
           username: res.locals.tokenData.username,
-          palettes: user.palettes,
+          palettes: user.palettes
         };
         next();
-      })
-    })
+      });
+    });
   },
 
- 
   // Middleware for deleting palette by palette ID
   deletePalette(req, res, next) {
     // need to figure out which element of palettes array wants to be deleted
@@ -102,12 +100,12 @@ const UsersController = {
         console.err(err);
       }
       let filteredArray = doc.palettes.filter(el => {
-        console.log("el._id", el._id, "req.params.palette_id", req.params.palette_id);
+        console.log('el._id', el._id, 'req.params.palette_id', req.params.palette_id);
         return JSON.stringify(el._id) !== JSON.stringify(req.params.palette_id);
       });
       doc.palettes = filteredArray;
       doc.save((err, user) => {
-        if(err) {
+        if (err) {
           console.error('Error in UserController.deletePalette', err);
           res.send(err);
         }
@@ -115,12 +113,11 @@ const UsersController = {
         res.locals.newTokenData = {
           _id: res.locals.tokenData._id,
           username: res.locals.tokenData.username,
-          palettes: user.palettes,
+          palettes: user.palettes
         };
         next();
-      })
-    })
-
+      });
+    });
   }
 };
 
