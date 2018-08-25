@@ -33,5 +33,20 @@ app.post('/signup', Users.createUser, (req, res) => {
   res.json({ username: res.locals.username, _id: res.locals._id });
 });
 
+//Login Route
+app.post('/login', Users.login, (req, res) => {
+  res.json({ username: res.locals.username, _id: res.locals._id, palettes: res.locals.palettes });
+});
+
+//Generate Palette Route
+app.post('/generatePalette', Users.generatePalette, (req, res) => {
+  
+});
+
+//Save Palette Route
+app.post('/savePalette', Users.savePalette, (req, res) => {
+  res.json( { username: res.locals.username, _id: res.locals._id, palettes: res.locals.palettes });
+});
+
 // Start server
 app.listen(PORT, () => console.log('Server started on port', PORT));
