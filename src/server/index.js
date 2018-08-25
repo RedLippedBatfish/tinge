@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const Users = require('./controllers/Users');
+const tokenService = require('./services/TokenService');
+const authService = require('./services/AuthService');
 
 // Create connection to Mongo DB via Mongoose
 mongoose.connect(process.env.DB_URI);
@@ -23,14 +25,22 @@ app.use(bodyParser.json());
 // Enable CORS to allow different hosts to connect to our server
 app.use(cors());
 
+// Middleware to parse tokens out of incoming request headers
+app.use(tokenService.receiveToken);
+
 // Dummy Route
 app.get('/', (req, res) => {
   res.send('Hello Brit');
 });
 
+// Dummy Restricted Route
+app.get('/restricted', authService.restrict(), (req, res) => {
+  res.json({ tokenData: res.locals.tokenData });
+});
+
 // Signup Route
-app.post('/signup', Users.createUser, (req, res) => {
-  res.json({ username: res.locals.username, _id: res.locals._id });
+app.post('/signup', Users.createUser, tokenService.createToken, (req, res) => {
+  res.json({ token: res.locals.token });
 });
 
 //Login Route
