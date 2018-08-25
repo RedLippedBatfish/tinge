@@ -14,9 +14,11 @@ const UsersController = {
           console.error('Error in UsersController.createUser:', err);
           res.send(err);
         }
-        res.locals._id = user._id;
-        res.locals.username = user.username;
-        res.locals.palettes = [];
+        res.locals.tokenData = {
+          _id: user._id,
+          username: user.username,
+          palettes: []
+        };
         next();
       });
     } else {
