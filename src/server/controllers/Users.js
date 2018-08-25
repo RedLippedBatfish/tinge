@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const { User, Palette } = require('../models/User');
 const bcrypt = require('bcryptjs');
 
 const UsersController = {
@@ -38,8 +38,12 @@ const UsersController = {
         } else {
           bcrypt.compare(req.body.password, docs[0].password_digest, function(err, result) {
             if (result) {
-              res.locals._id = docs[0]._id;
-              res.locals.username = docs[0].username;
+              res.locals.palettes = docs[0].palettes;
+              res.locals.tokenData = {
+                _id: docs[0]._id,
+                username: docs[0].username,
+                palettes: docs[0].palettes,
+              }
               next();
             } else {
               res.status(401);
@@ -57,24 +61,66 @@ const UsersController = {
 
   },
 
-
   // Middleware for creating new palette
   savePalette(req, res, next) { 
-    res.locals.tokenData 
-
-    
-    // update sub document when saving a palette 
-    // exract palette collection and save to array 
-
-    // 5 colors (each has RGB)
-    // Each palette will have 
-
-    // Object with 2 properties (name of palette, array of rgb object of top 5 colors
-    // Assume name and colors are in body of post request 
-  
+    console.log("req body colors", req.body.colors);
+    User.findById(res.locals.tokenData._id, (err, doc) => {
+      if (err) {
+        console.err(err);
+      }
+      const newPalette = new Palette( {
+        name: req.body.name,
+        colors: req.body.colors,
+      })
+      doc.palettes.push(newPalette);
+      doc.save((err, user) => {
+        if (err) {
+          console.error('Error in UserController.savePalette', err);
+          res.send(err);
+        }
+        res.locals.palettes = user.palettes;
+        res.locals.newTokenData = {
+          _id: res.locals.tokenData._id,
+          username: res.locals.tokenData.username,
+          palettes: user.palettes,
+        };
+        next();
+      })
+    })
   },
+
+ 
   // Middleware for deleting palette by palette ID
-  deletePalette(req, res, next) {}
+  deletePalette(req, res, next) {
+    // need to figure out which element of palettes array wants to be deleted
+    // get user from token and get doc back
+    // grab doc.palettes like above and use filter method to get array element to be deleted
+
+    User.findById(res.locals.tokenData._id, (err, doc) => {
+      if (err) {
+        console.err(err);
+      }
+      let filteredArray = doc.palettes.filter(el => {
+        console.log("el._id", el._id, "req.params.palette_id", req.params.palette_id);
+        return JSON.stringify(el._id) !== JSON.stringify(req.params.palette_id);
+      });
+      doc.palettes = filteredArray;
+      doc.save((err, user) => {
+        if(err) {
+          console.error('Error in UserController.deletePalette', err);
+          res.send(err);
+        }
+        res.locals.palettes = user.palettes;
+        res.locals.newTokenData = {
+          _id: res.locals.tokenData._id,
+          username: res.locals.tokenData.username,
+          palettes: user.palettes,
+        };
+        next();
+      })
+    })
+
+  }
 };
 
 module.exports = UsersController;

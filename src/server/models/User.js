@@ -35,5 +35,7 @@ userSchema.pre('save', function(next) {
 });
 
 const User = mongoose.model('User', userSchema);
+const Palette = mongoose.model('Palette', paletteSchema);
 
-module.exports = User;
+module.exports = { User, Palette };
+
